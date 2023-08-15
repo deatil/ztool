@@ -18,7 +18,7 @@ pub fn FileHash(comptime Hash: type) type {
         pub const key_length = mac_length;
         pub const block_length = 65536;
 
-        pub fn create(p: []const u8) ![]u8 {
+        pub fn create(p: []const u8) ![mac_length * 2]u8 {
             var file_name: []const u8 = try file.formatPath(p);
 
             var f = try fs.openFileAbsolute(file_name, .{
@@ -53,7 +53,7 @@ pub fn FileHash(comptime Hash: type) type {
 
             var encoded = fmt.bytesToHex(out[0..], .lower);
 
-            return encoded[0..];
+            return encoded;
         }
     };
 }
@@ -70,7 +70,7 @@ pub fn FileHmac(comptime Hash: type) type {
         pub const key_length = mac_length;
         pub const block_length = 65536;
 
-        pub fn create(p: []const u8, key: []const u8) ![]u8 {
+        pub fn create(p: []const u8, key: []const u8) ![mac_length * 2]u8 {
             var file_name: []const u8 = try file.formatPath(p);
 
             var f = try fs.openFileAbsolute(file_name, .{
@@ -105,7 +105,7 @@ pub fn FileHmac(comptime Hash: type) type {
 
             var encoded = fmt.bytesToHex(out[0..], .lower);
 
-            return encoded[0..];
+            return encoded;
         }
     };
 }

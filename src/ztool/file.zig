@@ -43,7 +43,7 @@ pub fn existsFile(p: []const u8) !bool {
 }
 
 // 读取文件
-pub fn readFile(p: []const u8, data: []u8) !usize {
+pub fn readFile(p: []const u8) ![]const u8 {
     var file_name: []const u8 = try formatPath(p);
 
     var f = try fs.openFileAbsolute(file_name, .{
@@ -55,7 +55,12 @@ pub fn readFile(p: []const u8, data: []u8) !usize {
     });
     defer f.close();
 
-    return try f.readAll(data[0..]);
+    const gpa = std.heap.page_allocator;
+
+    const file_length = (try f.metadata()).size();
+    const constent = try f.readToEndAlloc(gpa, file_length);
+
+    return constent;
 }
 
 // 写入文件

@@ -17,8 +17,10 @@ pub const Sha3_224 = hash.sha3.Sha3_224;
 pub const Sha3_256 = hash.sha3.Sha3_256;
 pub const Sha3_384 = hash.sha3.Sha3_384;
 pub const Sha3_512 = hash.sha3.Sha3_512;
+
 pub const Keccak256 = hash.sha3.Keccak256;
 pub const Keccak512 = hash.sha3.Keccak512;
+
 pub const Shake128 = hash.sha3.Shake128;
 pub const Shake256 = hash.sha3.Shake256;
 
@@ -40,7 +42,7 @@ pub fn Hash(comptime Hasher: type) type {
 
         hash: Hasher,
 
-        pub fn create(in: []const u8) ![]u8 {
+        pub fn create(in: []const u8) ![mac_length * 2]u8 {
             var out: [mac_length]u8 = undefined;
 
             var h = Hasher.init(.{});
@@ -50,7 +52,7 @@ pub fn Hash(comptime Hasher: type) type {
             // lower | upper
             var encoded = fmt.bytesToHex(out[0..], .lower);
 
-            return encoded[0..];
+            return encoded;
         }
 
         pub fn hasher() Hasher {
@@ -80,7 +82,7 @@ pub fn Hmac(comptime Hasher: type) type {
 
         hash: Hasher,
 
-        pub fn create(in: []const u8, key: []const u8) ![]u8 {
+        pub fn create(in: []const u8, key: []const u8) ![mac_length * 2]u8 {
             var out: [mac_length]u8 = undefined;
 
             var h = Hasher.init(key);
@@ -90,7 +92,7 @@ pub fn Hmac(comptime Hasher: type) type {
             // pub const Case = enum { lower, upper };
             var encoded = fmt.bytesToHex(out[0..], .lower);
 
-            return encoded[0..];
+            return encoded;
         }
 
         pub fn hasher() Hasher {
